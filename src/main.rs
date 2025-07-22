@@ -25,6 +25,9 @@ enum Command {
 
         #[arg(short, long, value_name = "OUTPUT_DIR", default_value = "gateway")]
         output: String,
+
+        #[arg(short = 'f', long, value_name = "FRAMEWORK", default_value = "axum")]
+        framework: String,
     },
 
     #[command(alias = "val")]
@@ -32,6 +35,9 @@ enum Command {
         #[arg(value_name = "CONFIG_PATH")]
         config_path: String,
     },
+
+    #[command(alias = "list-fw")]
+    ListFrameworks,
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -41,6 +47,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Command::New {
             config_path,
             output,
+            framework,
         } => {
             let config = validate(&config_path)?;
 
@@ -50,26 +57,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
 
-            let output = Path::new(&output);
-            if !output.exists() {
-                fs::create_dir_all(&output)?;
+            let template_dir = TEMPLATES
+                .get_dir(&framework)
+                .ok_or_else(|| format!("Framework `{}` is not supported.", framework))?;
+
+            let output_path = Path::new(&output);
+            if !output_path.exists() {
+                fs::create_dir_all(output_path)?;
             }
 
-            if let Some(cargo_toml) = TEMPLATES.get_file("Cargo.toml") {
-                let toml_path = output.join("Cargo.toml");
-                fs::write(toml_path, cargo_toml.contents())?;
-            } else {
-                eprintln!("Missing Cargo.toml template in embedded templates.");
+            for file in template_dir.files() {
+                let target_path = output_path.join(file.path().file_name().unwrap());
+                fs::write(target_path, file.contents())?;
             }
 
-            if let Some(dockerfile) = TEMPLATES.get_file("Dockerfile") {
-                let dockerfile_path = output.join("Dockerfile");
-                fs::write(dockerfile_path, dockerfile.contents())?;
-            } else {
-                eprintln!("Missing Dockerfile template in embedded templates.");
-            }
-
-            let gen_dir = output.join("src/gen");
+            let gen_dir = output_path.join("src/gen");
             if !gen_dir.exists() {
                 fs::create_dir_all(&gen_dir)?;
             }
@@ -89,11 +91,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     )?;
             }
 
+            println!("✅ Project generated at `{}`", output_path.display());
             Ok(())
         }
+
         Command::Validate { config_path } => {
             validate(&config_path)?;
-            println!("Configuration is valid.");
+            println!("✅ Configuration is valid.");
+            Ok(())
+        }
+
+        Command::ListFrameworks => {
+            let frameworks = TEMPLATES
+                .dirs()
+                .map(|d| d.path().file_name().unwrap().to_string_lossy())
+                .collect::<Vec<_>>();
+
+            println!("Available frameworks:\n{}", frameworks.join("\n"));
             Ok(())
         }
     }
@@ -112,5 +126,5 @@ fn validate(config_path: &str) -> Result<Config, Box<dyn std::error::Error>> {
         _ => return Err(format!("Unsupported file format: {}", ext).into()),
     };
 
-    Ok(parser.parse(&contents)?)
+    parser.parse(&contents)
 }
