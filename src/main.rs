@@ -1,13 +1,11 @@
 use std::{fs, path::Path};
 
-use clap::{Parser, Subcommand};
-use include_dir::{Dir, include_dir};
-
 use crate::parser::{Config, FileFormat};
+use crate::scaffolder::Framework;
+use clap::{Parser, Subcommand};
 
 mod parser;
-
-static TEMPLATES: Dir = include_dir!("$CARGO_MANIFEST_DIR/templates");
+mod scaffolder;
 
 #[derive(Parser)]
 #[command(name = "havoc", version, about = "A gRPC Gateway generator CLI tool")]
@@ -27,7 +25,7 @@ enum Command {
         output: String,
 
         #[arg(short = 'f', long, value_name = "FRAMEWORK", default_value = "axum")]
-        framework: String,
+        framework: Framework,
     },
 
     #[command(alias = "val")]
@@ -57,39 +55,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
 
-            let template_dir = TEMPLATES
-                .get_dir(&framework)
-                .ok_or_else(|| format!("Framework `{}` is not supported.", framework))?;
-
             let output_path = Path::new(&output);
-            if !output_path.exists() {
-                fs::create_dir_all(output_path)?;
-            }
-
-            for file in template_dir.files() {
-                let target_path = output_path.join(file.path().file_name().unwrap());
-                fs::write(target_path, file.contents())?;
-            }
-
-            let gen_dir = output_path.join("src/gen");
-            if !gen_dir.exists() {
-                fs::create_dir_all(&gen_dir)?;
-            }
-
-            for service in &config.spec.services {
-                tonic_build::configure()
-                    .build_server(false)
-                    .build_client(true)
-                    .out_dir(&gen_dir)
-                    .compile_protos(
-                        &[service.proto.clone()],
-                        &[Path::new(&service.proto)
-                            .parent()
-                            .unwrap()
-                            .to_str()
-                            .unwrap()],
-                    )?;
-            }
+            framework.scaffold(&config, output_path)?;
 
             println!("✅ Project generated at `{}`", output_path.display());
             Ok(())
@@ -102,12 +69,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         Command::ListFrameworks => {
-            let frameworks = TEMPLATES
-                .dirs()
-                .map(|d| d.path().file_name().unwrap().to_string_lossy())
-                .collect::<Vec<_>>();
-
-            println!("Available frameworks:\n{}", frameworks.join("\n"));
+            println!("Available frameworks:");
+            for fw in Framework::all() {
+                println!("• {}", fw);
+            }
             Ok(())
         }
     }

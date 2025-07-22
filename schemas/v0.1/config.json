@@ -110,24 +110,62 @@
                     "request": {
                       "type": "object",
                       "required": [
-                        "type"
+                        "type",
+                        "fields"
                       ],
                       "properties": {
                         "type": {
                           "type": "string",
                           "description": "gRPC request message type"
+                        },
+                        "fields": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name",
+                              "type"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              }
+                            }
+                          }
                         }
                       }
                     },
                     "response": {
                       "type": "object",
                       "required": [
-                        "type"
+                        "type",
+                        "fields"
                       ],
                       "properties": {
                         "type": {
                           "type": "string",
                           "description": "gRPC response message type"
+                        },
+                        "fields": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name",
+                              "type"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              }
+                            }
+                          }
                         },
                         "cookies": {
                           "type": "array",

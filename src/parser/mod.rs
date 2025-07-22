@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 pub mod json;
 pub mod yaml;
@@ -29,7 +29,7 @@ pub struct Spec {
     pub services: Vec<Service>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Service {
     pub name: String,
     pub proto: String,
@@ -37,7 +37,7 @@ pub struct Service {
     pub endpoints: Vec<Endpoint>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Endpoint {
     pub rpc: String,
     pub method: String,
@@ -46,26 +46,35 @@ pub struct Endpoint {
     pub response: Response,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Request {
     #[serde(rename = "type")]
     pub type_: String,
+    pub fields: Vec<Field>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Response {
     #[serde(rename = "type")]
     pub type_: String,
+    pub fields: Vec<Field>,
     pub cookies: Option<Vec<Cookie>>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Field {
+    pub name: String,
+    #[serde(rename = "type")]
+    pub type_: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Cookie {
     pub name: String,
     pub options: Option<CookieOptions>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct CookieOptions {
     #[serde(rename = "httpOnly")]
     pub http_only: Option<bool>,

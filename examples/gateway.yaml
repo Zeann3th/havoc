@@ -17,8 +17,18 @@ spec:
           path: /login
           request:
             type: LoginRequest
+            fields:
+              - name: username
+                type: String
+              - name: password
+                type: String
           response:
             type: LoginResponse
+            fields:
+              - name: access_token
+                type: String
+              - name: refresh_token
+                type: String
             cookies:
               - name: refresh_token
                 options:

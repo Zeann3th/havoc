@@ -1,0 +1,15 @@
+use axum::StatusCode;
+use tonic::{Status, Code};
+
+pub fn map_grpc_error(e: Status) -> (StatusCode, String) {
+    let code = match e.code() {
+        Code::NotFound => StatusCode::NOT_FOUND,
+        Code::InvalidArgument => StatusCode::BAD_REQUEST,
+        Code::Unauthenticated => StatusCode::UNAUTHORIZED,
+        Code::PermissionDenied => StatusCode::FORBIDDEN,
+        Code::AlreadyExists => StatusCode::CONFLICT,
+        Code::Unavailable => StatusCode::SERVICE_UNAVAILABLE,
+        _ => StatusCode::INTERNAL_SERVER_ERROR,
+    };
+    (code, e.message().to_string())
+}
