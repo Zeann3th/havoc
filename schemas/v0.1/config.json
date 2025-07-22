@@ -13,9 +13,7 @@
       "type": "object",
       "required": [
         "name",
-        "description",
-        "version",
-        "author"
+        "version"
       ],
       "properties": {
         "name": {
@@ -137,8 +135,7 @@
                           "items": {
                             "type": "object",
                             "required": [
-                              "name",
-                              "options"
+                              "name"
                             ],
                             "properties": {
                               "name": {
@@ -147,15 +144,6 @@
                               },
                               "options": {
                                 "type": "object",
-                                "required": [
-                                  "httpOnly",
-                                  "secure",
-                                  "sameSite",
-                                  "expires",
-                                  "path",
-                                  "domain",
-                                  "partitioned"
-                                ],
                                 "properties": {
                                   "httpOnly": {
                                     "type": "boolean"
@@ -171,9 +159,10 @@
                                       "None"
                                     ]
                                   },
-                                  "expires": {
-                                    "type": "string",
-                                    "description": "Duration string (e.g. 1h, 30m, 7d)"
+                                  "maxAge": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "description": "Maximum age of the cookie in seconds"
                                   },
                                   "path": {
                                     "type": "string"

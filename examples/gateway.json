@@ -12,7 +12,7 @@
         "services": [
             {
                 "name": "AuthService",
-                "proto": "./auth/proto/auth.proto",
+                "proto": "./examples/proto/auth.proto",
                 "url": "http://auth-svc.svc.cluster.local:8080",
                 "endpoints": [
                     {
@@ -31,7 +31,7 @@
                                         "httpOnly": true,
                                         "secure": true,
                                         "sameSite": "Strict",
-                                        "expires": "1h",
+                                        "maxAge": 3600,
                                         "path": "/",
                                         "domain": "example.com",
                                         "partitioned": true

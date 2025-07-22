@@ -1,0 +1,31 @@
+metadata:
+  name: gateway
+  description: A simple gateway configuration example
+  version: "1.0.0"
+  author: Zeann3th
+
+spec:
+  host: example.com
+  port: 80
+  services:
+    - name: AuthService
+      proto: ./examples/proto/auth.proto
+      url: http://auth-svc.svc.cluster.local:8080
+      endpoints:
+        - rpc: Login
+          method: POST
+          path: /login
+          request:
+            type: LoginRequest
+          response:
+            type: LoginResponse
+            cookies:
+              - name: refresh_token
+                options:
+                  httpOnly: true
+                  secure: true
+                  sameSite: Strict
+                  maxAge: 3600
+                  path: /
+                  domain: example.com
+                  partitioned: true

@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package book;
+
+service Book {
+  rpc GetAll(GetAllRequest) returns (GetAllResponse);
+  rpc GetById(GetByIdRequest) returns (GetByIdResponse);
+  rpc Create(CreateRequest) returns (CreateResponse);
+  rpc Update(UpdateRequest) returns (UpdateResponse);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+}
+
+message GetAllRequest {
+  uint32 page = 1;
+  uint32 limit = 2;
+}
+
+message GetAllResponse { repeated BookItem books = 1; }
+
+message GetByIdRequest { string id = 1; }
+
+message GetByIdResponse { BookItem book = 1; }
+
+message CreateRequest { BookItemPayload book = 1; }
+
+message CreateResponse { string id = 1; }
+
+message UpdateRequest {
+  string id = 1;
+  BookItemPayload book = 2;
+}
+
+message UpdateResponse { bool success = 1; }
+
+message DeleteRequest { string id = 1; }
+
+message DeleteResponse { bool success = 1; }
+
+message BookItem {
+  string id = 1;
+  string title = 2;
+  string author = 3;
+  string description = 4;
+  string isbn = 5;
+  int64 published_date = 6;
+  int64 created_at = 7;
+  int64 updated_at = 8;
+}
+
+message BookItemPayload {
+  string title = 2;
+  string author = 3;
+  string description = 4;
+  string isbn = 5;
+  int64 published_date = 6;
+}

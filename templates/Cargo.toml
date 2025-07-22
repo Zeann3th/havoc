@@ -1,0 +1,10 @@
+[package]
+name = "gateway"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tonic = "0.13"
+tokio = { version = "1.46", features = ["full"] }
+prost = "0.13"
+axum = "0.8"
