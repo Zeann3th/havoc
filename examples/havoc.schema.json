@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/gateway.schema.json",
+  "title": "Gateway Configuration Schema",
+  "description": "Schema for defining gRPC-based HTTP gateway mappings",
+  "type": "object",
+  "required": [
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "version",
+        "author"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the gateway configuration"
+        },
+        "description": {
+          "type": "string",
+          "description": "Short description of the gateway"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the configuration"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author or maintainer of the gateway"
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "required": [
+        "host",
+        "port",
+        "services"
+      ],
+      "properties": {
+        "host": {
+          "type": "string",
+          "description": "The public host name (e.g. example.com)"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "Port number to bind the gateway server to"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "proto",
+              "url",
+              "endpoints"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The service name (should match proto service name)"
+              },
+              "proto": {
+                "type": "string",
+                "description": "Path to the .proto file"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "The internal gRPC service URL"
+              },
+              "endpoints": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "rpc",
+                    "method",
+                    "path",
+                    "request",
+                    "response"
+                  ],
+                  "properties": {
+                    "rpc": {
+                      "type": "string",
+                      "description": "Name of the RPC method to invoke"
+                    },
+                    "method": {
+                      "type": "string",
+                      "description": "HTTP method to expose",
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "PATCH"
+                      ]
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "HTTP path to route to this RPC"
+                    },
+                    "request": {
+                      "type": "object",
+                      "required": [
+                        "type"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "description": "gRPC request message type"
+                        }
+                      }
+                    },
+                    "response": {
+                      "type": "object",
+                      "required": [
+                        "type"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "description": "gRPC response message type"
+                        },
+                        "cookies": {
+                          "type": "array",
+                          "description": "List of cookies to extract from the response",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name",
+                              "options"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "description": "Name of the cookie to set"
+                              },
+                              "options": {
+                                "type": "object",
+                                "required": [
+                                  "httpOnly",
+                                  "secure",
+                                  "sameSite",
+                                  "expires",
+                                  "path",
+                                  "domain",
+                                  "partitioned"
+                                ],
+                                "properties": {
+                                  "httpOnly": {
+                                    "type": "boolean"
+                                  },
+                                  "secure": {
+                                    "type": "boolean"
+                                  },
+                                  "sameSite": {
+                                    "type": "string",
+                                    "enum": [
+                                      "Strict",
+                                      "Lax",
+                                      "None"
+                                    ]
+                                  },
+                                  "expires": {
+                                    "type": "string",
+                                    "description": "Duration string (e.g. 1h, 30m, 7d)"
+                                  },
+                                  "path": {
+                                    "type": "string"
+                                  },
+                                  "domain": {
+                                    "type": "string"
+                                  },
+                                  "partitioned": {
+                                    "type": "boolean"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
