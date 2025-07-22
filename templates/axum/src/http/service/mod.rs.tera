@@ -3,12 +3,13 @@ use axum::{
     routing::{ {% for e in service.endpoints %}{{ e.method | lower }}{% if not loop.last %}, {% endif %}{% endfor %} },
     extract::State,
     response::IntoResponse,
-    http::{StatusCode, HeaderMap, HeaderValue},
+    http::StatusCode,
+    Json,
 };
 use tonic::transport::Channel;
-
-use crate::gen::{{ service.name | snake_case }}::{{ service.name | snake_case }}_client::{{ service.name }}Client;
-use crate::gen::{{ service.name | snake_case }}::{ {% for e in service.endpoints %}{{ e.request.type }}, {{
+use serde::{Deserialize, Serialize};
+use crate::generated::{{ service.name | snake_case }}::{{ service.name | snake_case }}_client::{{ service.name }}Client;
+use crate::generated::{{ service.name | snake_case }}::{ {% for e in service.endpoints %}{{ e.request.type }}, {{
 e.response.type }}{% if not loop.last %}, {% endif %}{% endfor %} };
 
 use crate::http::error::map_grpc_error;
@@ -35,7 +36,15 @@ pub struct AppState {
     pub client: {{ service.name }}Client<Channel>,
 }
 
-pub fn routes(client: {{ service.name }}Client<Channel>) -> Router {
+pub async fn routes() -> Router {
+    let channel = Channel::from_shared("{{ service.url}}".to_string())
+        .unwrap()
+        .connect()
+        .await
+        .unwrap();
+
+    let client = {{ service.name }}Client::new(channel);
+
     let state = AppState { client };
 
     Router::new()
@@ -47,10 +56,10 @@ pub fn routes(client: {{ service.name }}Client<Channel>) -> Router {
 
 {% for e in service.endpoints %}
 async fn {{ e.rpc | snake_case }}(
-    State(state): State<AppState>,
-    Json(input): Json(Http{{ e.request.type }})
-        ) -> impl IntoResponse {
-    let request = tonic::Request::new(Http{{ e.request.type }} {
+    State(mut state): State<AppState>,
+    Json(input): Json<Http{{ e.request.type }}>,
+) -> impl IntoResponse {
+    let request = tonic::Request::new({{ e.request.type }} {
         {% for field in e.request.fields %}
         {{ field.name }}: input.{{ field.name }},
         {% endfor %}
@@ -68,7 +77,7 @@ async fn {{ e.rpc | snake_case }}(
                 {% endfor %}
             };
 
-            (StatusCode::OK, Json(http_response))
+            (StatusCode::OK, Json(http_response)).into_response()
         }
 
         Err(e) => {

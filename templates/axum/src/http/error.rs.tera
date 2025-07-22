@@ -1,4 +1,4 @@
-use axum::StatusCode;
+use axum::http::StatusCode;
 use tonic::{Status, Code};
 
 pub fn map_grpc_error(e: Status) -> (StatusCode, String) {

@@ -2,15 +2,23 @@ use axum::{Router, http::StatusCode};
 
 mod http;
 
+mod generated {
+    {% for service in services %}
+    pub mod {{ service.name | snake_case }} {
+        include!("generated/{{ service.name | snake_case }}.rs");
+    }
+    {% endfor %}
+}
+
 #[tokio::main]
 async fn main() {
-    let port = std::env::var("PORT").unwrap_or_else(|_| "3000".to_string());
+    let port = std::env::var("PORT").unwrap_or_else(|_| "{{config.spec.port}}".to_string());
 
     let app = Router::new()
-        .merge(http::routes())
+        .merge(http::routes().await)
         .fallback(|| async { (StatusCode::NOT_FOUND, "Route Not Found".to_string()) });
 
-    let addr = format!("127.0.0.1:{}", port);
+    let addr = format!("{{config.spec.host}}:{}", port);
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
 

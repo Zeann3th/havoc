@@ -27,7 +27,7 @@ impl Scaffolder for AxumScaffolder {
             fs::write(target_path, file.contents())?;
         }
 
-        let gen_dir = output.join("src/gen");
+        let gen_dir = output.join("src/generated");
         if !gen_dir.exists() {
             fs::create_dir_all(&gen_dir)?;
         }
@@ -95,6 +95,7 @@ fn render_templates_recursively(
 
                     let mut context = Context::new();
                     context.insert("service", &patched_service);
+                    context.insert("config", config);
 
                     let snake_name = filters::to_snake_case(&service.name);
                     let replaced_path = rel_path.to_string_lossy().replace("service", &snake_name);
@@ -113,6 +114,7 @@ fn render_templates_recursively(
 
             let mut context = Context::new();
             context.insert("services", &config.spec.services);
+            context.insert("config", config);
 
             let target_path = output.join(rel_path).with_extension("");
             if let Some(parent) = target_path.parent() {

@@ -1,16 +1,16 @@
 use axum::Router;
 
-{% for service in services %}
+{% for service in config.spec.services %}
 pub mod {{ service.name | snake_case }};
 {% endfor %}
 
 pub mod error;
 
-pub fn routes() -> Router {
+pub async fn routes() -> Router {
     let mut router = Router::new();
 
-    {% for service in services %}
-    router = router.merge({{ service.name | snake_case }}::routes());
+    {% for service in config.spec.services %}
+    router = router.merge({{ service.name | snake_case }}::routes().await);
     {% endfor %}
 
     router

@@ -8,13 +8,13 @@ pub trait Parser {
     fn parse(input: &str) -> Result<Config, Box<dyn std::error::Error>>;
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
     pub metadata: Metadata,
     pub spec: Spec,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Metadata {
     pub name: String,
     pub version: String,
@@ -22,7 +22,7 @@ pub struct Metadata {
     pub author: Option<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Spec {
     pub host: String,
     pub port: u16,
