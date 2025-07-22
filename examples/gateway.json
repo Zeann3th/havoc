@@ -1,4 +1,5 @@
 {
+    "$schema": "https://zeann3th.github.io/havoc/schemas/v0.1/config.json",
     "metadata": {
         "name": "gateway",
         "description": "A simple gateway configuration example",

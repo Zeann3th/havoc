@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/Zeann3th/havoc/schemas/havoc.schema.json",
+  "$id": "https://zeann3th.github.io/havoc/schemas/v0.1/config.json",
   "title": "Gateway Configuration Schema",
   "description": "Schema for defining gRPC-based HTTP gateway mappings",
   "type": "object",
