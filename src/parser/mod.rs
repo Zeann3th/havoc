@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 pub mod factory;
 mod formats;
-mod type_converter;
 
 pub trait Parser {
     fn parse(input: &str) -> Result<Config, Box<dyn std::error::Error>>;
