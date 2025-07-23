@@ -5,30 +5,20 @@ metadata:
   author: Zeann3th
 
 spec:
-  host: example.com
-  port: 80
+  host: 127.0.0.1
+  port: 50050
   services:
-    - name: AuthService
+    - name: Auth
       proto: ./examples/proto/auth.proto
-      url: http://auth-svc.svc.cluster.local:8080
+      url: http://localhost:50051
       endpoints:
         - rpc: Login
           method: POST
-          path: /login
+          path: /sign-in
           request:
             type: LoginRequest
-            fields:
-              - name: username
-                type: String
-              - name: password
-                type: String
           response:
             type: LoginResponse
-            fields:
-              - name: access_token
-                type: String
-              - name: refresh_token
-                type: String
             cookies:
               - name: refresh_token
                 options:
@@ -39,3 +29,10 @@ spec:
                   path: /
                   domain: example.com
                   partitioned: true
+        - rpc: Register
+          method: POST
+          path: /sign-up
+          request:
+            type: RegisterRequest
+          response:
+            type: RegisterResponse

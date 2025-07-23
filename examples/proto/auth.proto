@@ -7,7 +7,7 @@ service Auth {
   rpc Register(RegisterRequest) returns (RegisterResponse);
   rpc GetById(GetByIdRequest) returns (GetByIdResponse);
   rpc Refresh(RefreshRequest) returns (RefreshResponse);
-  rpc Logout(LogoutRequest) returns (LogoutResponse); 
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
 }
 
 message LoginRequest {
@@ -25,7 +25,7 @@ message RegisterRequest {
   string password = 2;
 }
 
-message RegisterResponse { string message = 1; }
+message RegisterResponse { string msg = 1; }
 
 message GetByIdRequest { string id = 1; }
 
@@ -37,17 +37,11 @@ message User {
   string role = 3;
 }
 
-message LogoutRequest {
-  string refresh_token = 1;
-}
+message LogoutRequest { string refresh_token = 1; }
 
-message LogoutResponse {
-  bool success = 1;
-}
+message LogoutResponse { bool success = 1; }
 
-message RefreshRequest {
-  string refresh_token = 1;
-}
+message RefreshRequest { string refresh_token = 1; }
 
 message RefreshResponse {
   string access_token = 1;

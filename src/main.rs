@@ -1,6 +1,9 @@
 use clap::{Parser, Subcommand};
 use std::path::Path;
 
+use crate::{parser::factory::ParserFactory, scaffolder::factory::ScaffolderFactory};
+
+mod framework;
 mod parser;
 mod scaffolder;
 
@@ -22,7 +25,7 @@ enum Command {
         output: String,
 
         #[arg(short = 'f', long, value_name = "FRAMEWORK", default_value = "axum")]
-        framework: scaffolder::Framework,
+        framework: framework::Framework,
     },
 
     #[command(alias = "val")]
@@ -44,7 +47,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             output,
             framework,
         } => {
-            let parser = parser::ParserFactory::new(&config_path)?;
+            let parser = ParserFactory::with_framework(framework, &config_path)?;
             let config = parser.parse()?;
 
             for service in &config.spec.services {
@@ -54,7 +57,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
 
             let output = Path::new(&output);
-            let scaffolder_factory = scaffolder::ScaffolderFactory { framework, config };
+            let scaffolder_factory = ScaffolderFactory { framework, config };
             scaffolder_factory.scaffold(output)?;
 
             println!("✅ Project generated at `{}`", output.display());
@@ -62,7 +65,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         Command::Validate { config_path } => {
-            let parser = parser::ParserFactory::new(&config_path)?;
+            let parser = ParserFactory::new(&config_path)?;
             parser.parse()?;
             println!("✅ Configuration is valid.");
             Ok(())
@@ -70,7 +73,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         Command::ListFrameworks => {
             println!("Available frameworks:");
-            for fw in scaffolder::Framework::all() {
+            for fw in framework::Framework::all() {
                 println!("• {}", fw);
             }
             Ok(())

@@ -8,17 +8,17 @@
     },
     "spec": {
         "host": "127.0.0.1",
-        "port": 3000,
+        "port": 50050,
         "services": [
             {
                 "name": "Auth",
                 "proto": "./examples/proto/auth.proto",
-                "url": "http://auth-svc.svc.cluster.local:8080",
+                "url": "http://localhost:50051",
                 "endpoints": [
                     {
                         "rpc": "Login",
                         "method": "POST",
-                        "path": "/login",
+                        "path": "/sign-in",
                         "request": {
                             "type": "LoginRequest"
                         },
@@ -38,6 +38,17 @@
                                     }
                                 }
                             ]
+                        }
+                    },
+                    {
+                        "rpc": "Register",
+                        "method": "POST",
+                        "path": "/sign-up",
+                        "request": {
+                            "type": "RegisterRequest"
+                        },
+                        "response": {
+                            "type": "RegisterResponse"
                         }
                     }
                 ]

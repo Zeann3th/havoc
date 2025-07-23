@@ -1,6 +1,6 @@
 use axum::{
     Router,
-    routing::{ {% for e in service.endpoints %}{{ e.method | lower }}{% if not loop.last %}, {% endif %}{% endfor %} },
+    routing::{ get, post, delete, put, patch, head},
     extract::State,
     response::IntoResponse,
     http::StatusCode,
