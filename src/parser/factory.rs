@@ -4,7 +4,7 @@ use crate::{
     framework::Framework,
     parser::{
         Config, Parser,
-        formats::{FileFormat, json::JsonParser, yaml::YamlParser},
+        formats::{FileFormat, json::JsonParser, populate_from_proto, yaml::YamlParser},
     },
 };
 
@@ -44,10 +44,17 @@ impl ParserFactory {
         Ok(factory)
     }
 
+    pub fn build(&self) -> Result<Config, Box<dyn std::error::Error>> {
+        let mut config = self.parse()?;
+        populate_from_proto(&mut config)?;
+        Ok(config)
+    }
+
     pub fn parse(&self) -> Result<Config, Box<dyn std::error::Error>> {
-        match self.file_type {
+        let config = match self.file_type {
             FileFormat::Json => JsonParser::parse(&self.content),
             FileFormat::Yaml => YamlParser::parse(&self.content),
-        }
+        }?;
+        Ok(config)
     }
 }

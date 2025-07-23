@@ -13,7 +13,7 @@ pub enum FileFormat {
     Yaml,
 }
 
-fn populate_from_proto(config: &mut Config) -> Result<(), Box<dyn std::error::Error>> {
+pub fn populate_from_proto(config: &mut Config) -> Result<(), Box<dyn std::error::Error>> {
     for service in &mut config.spec.services {
         let proto_path = &service.proto;
         let content = fs::read_to_string(proto_path)?;

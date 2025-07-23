@@ -48,7 +48,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             framework,
         } => {
             let parser = ParserFactory::with_framework(framework, &config_path)?;
-            let config = parser.parse()?;
+            let config = parser.build()?;
 
             for service in &config.spec.services {
                 if !Path::new(&service.proto).exists() {
@@ -66,7 +66,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         Command::Validate { config_path } => {
             let parser = ParserFactory::new(&config_path)?;
-            parser.parse()?;
+            parser.build()?;
             println!("✅ Configuration is valid.");
             Ok(())
         }
