@@ -1,8 +1,5 @@
-use std::{fs, path::Path};
-
-use crate::parser::{Config, FileFormat};
-use crate::scaffolder::Framework;
 use clap::{Parser, Subcommand};
+use std::path::Path;
 
 mod parser;
 mod scaffolder;
@@ -25,7 +22,7 @@ enum Command {
         output: String,
 
         #[arg(short = 'f', long, value_name = "FRAMEWORK", default_value = "axum")]
-        framework: Framework,
+        framework: scaffolder::Framework,
     },
 
     #[command(alias = "val")]
@@ -47,7 +44,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             output,
             framework,
         } => {
-            let config = validate(&config_path)?;
+            let parser = parser::ParserFactory::new(&config_path)?;
+            let config = parser.parse()?;
 
             for service in &config.spec.services {
                 if !Path::new(&service.proto).exists() {
@@ -55,41 +53,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
 
-            let output_path = Path::new(&output);
-            framework.scaffold(&config, output_path)?;
+            let output = Path::new(&output);
+            let scaffolder_factory = scaffolder::ScaffolderFactory { framework, config };
+            scaffolder_factory.scaffold(output)?;
 
-            println!("✅ Project generated at `{}`", output_path.display());
+            println!("✅ Project generated at `{}`", output.display());
             Ok(())
         }
 
         Command::Validate { config_path } => {
-            validate(&config_path)?;
+            let parser = parser::ParserFactory::new(&config_path)?;
+            parser.parse()?;
             println!("✅ Configuration is valid.");
             Ok(())
         }
 
         Command::ListFrameworks => {
             println!("Available frameworks:");
-            for fw in Framework::all() {
+            for fw in scaffolder::Framework::all() {
                 println!("• {}", fw);
             }
             Ok(())
         }
     }
-}
-
-fn validate(config_path: &str) -> Result<Config, Box<dyn std::error::Error>> {
-    let contents = fs::read_to_string(config_path)?;
-    let ext = Path::new(config_path)
-        .extension()
-        .and_then(|s| s.to_str())
-        .unwrap_or_default();
-
-    let parser = match ext {
-        "json" => FileFormat::Json,
-        "yaml" | "yml" => FileFormat::Yaml,
-        _ => return Err(format!("Unsupported file format: {}", ext).into()),
-    };
-
-    parser.parse(&contents)
 }

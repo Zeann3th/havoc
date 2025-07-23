@@ -44,15 +44,18 @@ impl Framework {
     pub fn all() -> Vec<Self> {
         vec![Self::Axum, Self::NestJS]
     }
+}
 
-    pub fn scaffold(
-        &self,
-        config: &Config,
-        output: &Path,
-    ) -> Result<(), Box<dyn std::error::Error>> {
-        match self {
-            Framework::Axum => axum::AxumScaffolder::scaffold(config, output),
-            Framework::NestJS => nestjs::NestjsScaffolder::scaffold(config, output),
+pub struct ScaffolderFactory {
+    pub framework: Framework,
+    pub config: Config,
+}
+
+impl ScaffolderFactory {
+    pub fn scaffold(&self, output: &Path) -> Result<(), Box<dyn std::error::Error>> {
+        match self.framework {
+            Framework::Axum => axum::AxumScaffolder::scaffold(&self.config, output),
+            Framework::NestJS => nestjs::NestjsScaffolder::scaffold(&self.config, output),
         }
     }
 }
