@@ -19,11 +19,7 @@
                         "rpc": "Login",
                         "method": "POST",
                         "path": "/sign-in",
-                        "request": {
-                            "type": "LoginRequest"
-                        },
                         "response": {
-                            "type": "LoginResponse",
                             "cookies": [
                                 {
                                     "name": "refresh_token",
@@ -43,13 +39,7 @@
                     {
                         "rpc": "Register",
                         "method": "POST",
-                        "path": "/sign-up",
-                        "request": {
-                            "type": "RegisterRequest"
-                        },
-                        "response": {
-                            "type": "RegisterResponse"
-                        }
+                        "path": "/sign-up"
                     }
                 ]
             }

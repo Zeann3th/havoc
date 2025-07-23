@@ -83,9 +83,7 @@
                   "required": [
                     "rpc",
                     "method",
-                    "path",
-                    "request",
-                    "response"
+                    "path"
                   ],
                   "properties": {
                     "rpc": {
@@ -121,9 +119,6 @@
                     },
                     "response": {
                       "type": "object",
-                      "required": [
-                        "type"
-                      ],
                       "properties": {
                         "type": {
                           "type": "string",
@@ -162,7 +157,7 @@
                                   "maxAge": {
                                     "type": "integer",
                                     "minimum": 0,
-                                    "description": "Maximum age of the cookie in seconds"
+                                    "description": "Max age of the cookie in seconds"
                                   },
                                   "path": {
                                     "type": "string"

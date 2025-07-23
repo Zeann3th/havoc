@@ -43,6 +43,13 @@ fn populate_from_proto(config: &mut Config) -> Result<(), Box<dyn std::error::Er
                 )
             })?;
 
+            if endpoint.request.type_.is_empty() {
+                endpoint.request.type_ = rpc.request.clone();
+            }
+            if endpoint.response.type_.is_empty() {
+                endpoint.response.type_ = rpc.response.clone();
+            }
+
             let req_msg = proto
                 .messages
                 .iter()

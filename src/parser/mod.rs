@@ -42,26 +42,47 @@ pub struct Endpoint {
     pub rpc: String,
     pub method: String,
     pub path: String,
+    #[serde(default)]
     pub request: Request,
+    #[serde(default)]
     pub response: Response,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Request {
-    #[serde(rename = "type")]
+    #[serde(rename = "type", default)]
     pub type_: String,
     #[serde(default)]
     pub fields: Vec<Field>,
 }
 
+impl Default for Request {
+    fn default() -> Self {
+        Request {
+            type_: String::new(),
+            fields: Vec::new(),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Response {
-    #[serde(rename = "type")]
+    #[serde(rename = "type", default)]
     pub type_: String,
     #[serde(default)]
     pub fields: Vec<Field>,
     #[serde(default)]
     pub cookies: Vec<Cookie>,
+}
+
+impl Default for Response {
+    fn default() -> Self {
+        Response {
+            type_: String::new(),
+            fields: Vec::new(),
+            cookies: Vec::new(),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize)]
