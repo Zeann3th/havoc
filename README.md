@@ -40,31 +40,7 @@ Currently supports JSON and YAML
                         "rpc": "Login",
                         "method": "POST",
                         "path": "/login",
-                        "request": {
-                            "type": "LoginRequest",
-                            "fields": [
-                                {
-                                    "name": "username",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "password",
-                                    "type": "String"
-                                }
-                            ]
-                        },
                         "response": {
-                            "type": "LoginResponse",
-                            "fields": [
-                                {
-                                    "name": "access_token",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "refresh_token",
-                                    "type": "String"
-                                }
-                            ],
                             "cookies": [
                                 {
                                     "name": "refresh_token",
@@ -108,20 +84,7 @@ spec:
         - rpc: Login
           method: POST
           path: /login
-          request:
-            type: LoginRequest
-            fields:
-              - name: username
-                type: String
-              - name: password
-                type: String
           response:
-            type: LoginResponse
-            fields:
-              - name: access_token
-                type: String
-              - name: refresh_token
-                type: String
             cookies:
               - name: refresh_token
                 options:
@@ -149,15 +112,16 @@ By default, it will generate code for Rust Axum http Framework, for more framewo
 ```bash
 havoc list-fw
 
-havoc new <config-file-path> -f axum # or nestjs or ...
+havoc new <config-file-path> -f axum # or nestjs or spring and etc
 ```
 
 As of 2025/07/22, havoc only support Axum since this is an early build.
 
-Once done, you can add middlewares freely, changing code logic and etc to suit your needs. This tools helps with generating boilerplate code, not a universal solution.
+Once done, you can add middlewares freely, changing code logic and etc to suit your needs. This tools helps with generating boilerplate code, not a universal solution. There may be some errors with types (like custom proto messages), some unused imports, hope you can ignore or optimize it after development.
 
 ## Road maps
-- [ ] Nestjs and other frameworks
+- [ ] User defined messages will cause errors, so i will need to support those by creating new struct based on those types with serde's traits
+- [ ] Nestjs, Spring and other frameworks
 - [ ] User defined template files
 - [ ] Support Rest, Graphql for config file (currently limited to gRPC)
 - [ ] Generate static openapi documentation so users can copy and include in their server
