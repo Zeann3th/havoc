@@ -10,7 +10,7 @@ pipeline {
             }
 
             steps {
-                bat '''
+                sh '''
                     echo "Running tests..."
                     cargo test --verbose
                 '''
@@ -26,7 +26,7 @@ pipeline {
             }
 
             steps {
-                bat '''
+                sh '''
                     echo "Building project..."
                     cargo build --release
                 '''
