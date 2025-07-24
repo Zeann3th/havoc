@@ -3,8 +3,10 @@ pipeline {
 
     stages {
         stage('Test') {
-            docker {
-                image 'rust:1.88'
+            agent {
+                docker {
+                    image 'rust:1.88'
+                }
             }
 
             steps {
@@ -16,9 +18,11 @@ pipeline {
         }
 
         stage('Build') {
-            docker {
-                image 'rust:1.88'
-                reuseNode true
+            agent {
+                docker {
+                    image 'rust:1.88'
+                    reuseNode true
+                }
             }
 
             steps {
