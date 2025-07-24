@@ -1,0 +1,29 @@
+package com.example.gateway.controller;
+import {{ service.options.java_package }}.client.{{ service.name | capitalize }}Client;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+public class {{ service.name | capitalize }}Controller {
+
+    @Autowired
+    private {{ service.name | capitalize }}Client {{ service.name | camel_case }}Client;
+
+    {% for e in service.endpoints %}
+    @{{ e.method | capitalize}}Mapping("{{ e.path }}")
+    public {{e.response.type}} {{e.rpc | camel_case}}(
+        {% for p in e.request.fields %}
+        @RequestParam(name = "{{ p.name }}") {{ p.type }} {{ p.name }},
+        {% endfor %}
+        @RequestHeader Map<String, String> headers) {
+
+        return {{ service.name | camel_case }}Client.{{ e.rpc | camel_case }}(
+            {% for p in e.request.fields %}
+            {{ p.name }},
+            {% endfor %}
+            headers
+        );
+    }
+    {% if not loop.last %} \n\n {% endif %}
+    {% endfor %}
+}

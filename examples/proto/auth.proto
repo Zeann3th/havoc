@@ -2,6 +2,10 @@ syntax = "proto3";
 
 package auth;
 
+option java_multiple_files = true;
+option java_package = "com.example.grpc";
+option java_outer_classname = "AuthProto";
+
 service Auth {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Register(RegisterRequest) returns (RegisterResponse);

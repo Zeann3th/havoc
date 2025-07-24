@@ -1,5 +1,5 @@
-use std::{fs, path::Path};
 use std::str::FromStr;
+use std::{fs, path::Path};
 
 use proto_def::{lexer::Lexer, parser::Parser as ProtoParser};
 
@@ -80,6 +80,10 @@ fn populate_from_proto(config: &mut Config) -> Result<(), Box<dyn std::error::Er
                     service.name, proto_path
                 )
             })?;
+
+        for (k, v) in proto.options.iter() {
+            service.options.entry(k.clone()).or_insert(v.clone());
+        }
 
         for endpoint in &mut service.endpoints {
             let rpc = svc.methods.get(&endpoint.rpc).ok_or_else(|| {

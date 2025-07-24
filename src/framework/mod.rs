@@ -9,6 +9,7 @@ pub mod factory;
 pub enum Framework {
     Axum,
     NestJS,
+    Spring
 }
 
 impl FromStr for Framework {
@@ -18,6 +19,7 @@ impl FromStr for Framework {
         match s.to_lowercase().as_str() {
             "axum" => Ok(Self::Axum),
             "nestjs" => Ok(Self::NestJS),
+            "spring" => Ok(Self::Spring),
             _ => Err(format!("Unsupported framework: {}", s)),
         }
     }
@@ -28,6 +30,7 @@ impl fmt::Display for Framework {
         let name = match self {
             Self::Axum => "axum",
             Self::NestJS => "nestjs",
+            Self::Spring => "spring",
         };
         write!(f, "{}", name)
     }

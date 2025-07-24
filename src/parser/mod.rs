@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 
 pub mod factory;
@@ -34,6 +36,8 @@ pub struct Service {
     pub proto: String,
     pub url: String,
     pub endpoints: Vec<Endpoint>,
+    #[serde(default)]
+    pub options: HashMap<String, String>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]

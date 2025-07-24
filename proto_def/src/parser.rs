@@ -90,8 +90,20 @@ impl<'a> Parser<'a> {
                     if let Some(Token::Identifier(name)) = self.next() {
                         let name = name.clone();
                         self.expect(&Token::Equal)?;
-                        if let Some(Token::Literal(value)) = self.next() {
-                            content.options.insert(name, value.clone());
+                        if let Some(token) = self.next() {
+                            let value = match token {
+                                Token::Literal(s) => s.clone(),
+                                Token::Bool => "true".to_string(),
+                                Token::Identifier(s) => s.clone(),
+                                Token::Number(n) => n.to_string(),
+                                _ => {
+                                    return Err(format!(
+                                        "Unexpected token for option value: {:?}",
+                                        token
+                                    ));
+                                }
+                            };
+                            content.options.insert(name, value);
                         } else {
                             return Err("Expected option value after '='".into());
                         }

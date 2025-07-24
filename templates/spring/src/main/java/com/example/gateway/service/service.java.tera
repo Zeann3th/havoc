@@ -1,0 +1,41 @@
+package {{service.options.java_package}}.client;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import {{service.options.java_package}}.{{service.name | capitalize}}Grpc;
+import {{service.options.java_package}}.*;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class {{ service.name | capitalize}}Client {
+
+    private final {{ service.name | capitalize }}Grpc.{{ service.name | capitalize }}BlockingStub blockingStub;
+
+    public {{ service.name | capitalize }}Client() {
+        ManagedChannel channel;
+        try {
+            String url = "{{service.url}}";
+            URI uri = new URI(url);
+            String host = uri.getHost();
+            int port = uri.getPort();
+
+            channel = ManagedChannelBuilder
+                .forAddress(host, port)
+                .usePlaintext()
+                .build();
+
+            blockingStub = {{ service.name | capitalize }}Grpc.newBlockingStub(channel);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Invalid service URL: {{service.url}}", e);
+        }
+    }
+
+    {% for e in service.endpoints %}
+    public {{ e.response.type }} {{ e.rpc | camel_case }}({{ e.request.type }} request) {
+        return blockingStub.{{ e.rpc | camel_case }}(request);
+    }
+    {% endfor %}
+}

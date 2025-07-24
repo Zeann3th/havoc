@@ -1,6 +1,5 @@
 use crate::framework::{
-    Framework,
-    type_mapper::{RustTypeMapper, TypeMapper},
+    type_mapper::{JavaTypeMapper, RustTypeMapper, TypeMapper}, Framework
 };
 
 pub struct TypeMapperFactory {
@@ -12,6 +11,7 @@ impl TypeMapperFactory {
         match self.framework {
             Framework::Axum => RustTypeMapper.map_type(proto_type),
             Framework::NestJS => "NOT IMPLEMENTED".to_string(),
+            Framework::Spring => JavaTypeMapper.map_type(proto_type),
         }
     }
 }
