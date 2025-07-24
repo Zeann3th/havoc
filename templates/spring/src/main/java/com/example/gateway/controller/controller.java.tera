@@ -10,7 +10,7 @@ public class {{ service.name | capitalize }}Controller {
     private {{ service.name | capitalize }}Client {{ service.name | camel_case }}Client;
 
     {% for e in service.endpoints %}
-    @{{ e.method | capitalize}}Mapping("{{ e.path }}")
+    @{{ e.method | lower_case | capitalize }}Mapping("{{ e.path }}")
     public {{e.response.type}} {{e.rpc | camel_case}}(
         {% for p in e.request.fields %}
         @RequestParam(name = "{{ p.name }}") {{ p.type }} {{ p.name }},

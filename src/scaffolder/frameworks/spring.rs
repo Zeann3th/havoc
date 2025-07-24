@@ -20,6 +20,7 @@ impl Scaffolder for SpringScaffolder {
         tera.register_filter("snake_case", filters::snake_case_filter);
         tera.register_filter("camel_case", filters::camel_case_filter);
         tera.register_filter("capitalize", filters::capitalize_filter);
+        tera.register_filter("lower_case", filters::lower_case_filter);
 
         render_spring_templates(&mut tera, &SPRING_TEMPLATES, output, config)?;
         Ok(())
