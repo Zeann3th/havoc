@@ -41,12 +41,10 @@ fn render_spring_templates(
             let content = std::str::from_utf8(file.contents())?;
             tera.add_raw_template(&name, content)?;
 
-            // Per-service template rendering
             if name.contains("controller") || name.contains("client") || name.contains("service") {
                 for service in &config.spec.services {
                     let mut patched_service = serde_json::to_value(service)?.clone();
 
-                    // Ensure `fields` array exists
                     if let Some(endpoints) = patched_service
                         .get_mut("endpoints")
                         .and_then(Value::as_array_mut)
@@ -67,7 +65,6 @@ fn render_spring_templates(
                     context.insert("service", &patched_service);
                     context.insert("config", config);
 
-                    // 👇 Replace output file names for flat structure
                     let replaced_path = {
                         let file_name = rel_path.file_name().unwrap().to_string_lossy();
 
@@ -106,7 +103,6 @@ fn render_spring_templates(
                 continue;
             }
 
-            // Render shared or static templates (not per-service)
             let mut context = Context::new();
             context.insert("config", config);
             context.insert("services", &config.spec.services);
@@ -119,7 +115,6 @@ fn render_spring_templates(
             let rendered = tera.render(&name, &context)?;
             fs::write(target_path, rendered)?;
         } else {
-            // Copy non-template files as-is
             let target_path = output.join(rel_path);
             if let Some(parent) = target_path.parent() {
                 fs::create_dir_all(parent)?;
@@ -128,7 +123,6 @@ fn render_spring_templates(
         }
     }
 
-    // Recursively process subdirectories
     for subdir in dir.dirs() {
         render_spring_templates(tera, subdir, output, config)?;
     }
