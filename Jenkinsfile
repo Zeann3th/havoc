@@ -2,6 +2,12 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Zeann3th/havoc.git']])
+            }
+        }
+
         stage('Test') {
             agent {
                 docker {
@@ -12,7 +18,7 @@ pipeline {
             steps {
                 sh '''
                     echo "Running tests..."
-                    cargo test --verbose
+                    cargo test
                 '''
             }
         }
