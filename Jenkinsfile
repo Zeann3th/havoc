@@ -12,6 +12,7 @@ pipeline {
             agent {
                 docker {
                     image 'rust:1.88'
+                    reuseNode true
                 }
             }
 
