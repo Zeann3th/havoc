@@ -1,5 +1,5 @@
 # Havoc
-A CLI tool that makes gRPC gateways easier than ever using a config file (JSON, YAML) (Config as Code)
+A CLI tool that makes gRPC gateways easier than ever using a config file (JSON, YAML) (Config as Code).
 
 ## Installation
 
